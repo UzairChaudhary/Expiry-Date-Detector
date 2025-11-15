@@ -1,0 +1,8 @@
+# paddleocr 
+# paddlepaddle 
+easyocr
+# dateparser 
+# python-dateutil
+fastapi
+uvicorn[standard]
+python-multipart
