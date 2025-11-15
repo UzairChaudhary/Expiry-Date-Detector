@@ -5,6 +5,7 @@ from datetime import datetime
 import re
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import uvicorn
 import os
@@ -17,6 +18,15 @@ app = FastAPI(
     title="OCR Date Extraction API",
     description="API to extract manufacturing and expiry dates from images using OCR",
     version="1.0.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 def parse_date(date_str):

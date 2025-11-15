@@ -22,12 +22,20 @@ RUN pip install --upgrade pip setuptools wheel
 # Copy requirements file
 COPY requirements.txt .
 
-# Install PyTorch CPU version first (smaller and faster than GPU version)
-# This is needed by EasyOCR and is a large package
-RUN pip install --no-cache-dir --default-timeout=1000 torch torchvision --index-url https://download.pytorch.org/whl/cpu
+# Install lightweight dependencies first (for better layer caching)
+RUN pip install --default-timeout=1000 \
+    fastapi \
+    uvicorn[standard] \
+    python-multipart
 
-# Install remaining Python dependencies with increased timeout
-RUN pip install --no-cache-dir --default-timeout=1000 -r requirements.txt
+# Install PyTorch CPU version (large package, ~200MB)
+# Using CPU version is smaller and sufficient for Heroku
+RUN pip install --default-timeout=1000 \
+    torch torchvision \
+    --index-url https://download.pytorch.org/whl/cpu
+
+# Install EasyOCR last (depends on torch, very large with all dependencies)
+RUN pip install --default-timeout=1000 easyocr
 
 # Copy application code
 COPY main.py .
